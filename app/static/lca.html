@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HDPE LCA — Study Console</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="/static/lca.css" />
+  </head>
+  <body class="lca-body">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark lca-mark">LCA</div>
+        <div>
+          <h1>HDPE Life-Cycle Assessment</h1>
+          <p class="sub">Cradle-to-gate · NG → MeOH → MTO → HDPE · ISO 14040/14044</p>
+        </div>
+      </div>
+
+      <div class="headline">
+        <div class="headline-value">
+          <span id="h-gwp">—</span><small>t CO<sub>2</sub>e / t HDPE</small>
+        </div>
+        <div class="headline-meta">
+          <span id="h-energy">—</span>
+          <span id="h-method">GWP100 · IPCC AR6</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <span id="v-status" class="chip">loading</span>
+        <a class="btn ghost" href="/">PCF dashboard</a>
+        <a class="btn" id="dl-report" href="/lca/files/LCA_report.pdf" target="_blank" rel="noopener">Report</a>
+        <a class="btn primary" id="dl-deck" href="/lca/files/LCA_presentation.pptx">Deck</a>
+      </div>
+    </header>
+
+    <nav class="lca-nav" aria-label="Study sections">
+      <div class="lca-nav-inner" id="nav"></div>
+    </nav>
+
+    <main class="lca-main" id="main">
+      <section class="lca-section" id="s-study">
+        <div class="sec-head">
+          <span class="sec-no">01</span>
+          <h2>Goal &amp; scope</h2>
+          <span class="sec-note">what this study is for, and what it is not</span>
+        </div>
+        <div class="kpis" id="kpis"></div>
+        <div class="grid">
+          <article class="card span-7" id="study-goal"></article>
+          <article class="card span-5 fu-card" id="study-fu"></article>
+          <article class="card span-6" id="study-method"></article>
+          <article class="card span-6" id="study-scope"></article>
+          <article class="card span-12 limits" id="study-limits"></article>
+        </div>
+      </section>
+
+      <section class="lca-section" id="s-boundary">
+        <div class="sec-head">
+          <span class="sec-no">02</span>
+          <h2>System boundary</h2>
+          <span class="sec-note">included modules are modelled; excluded ones are named, quantified where possible, never assumed away</span>
+        </div>
+        <div class="grid">
+          <article class="card span-7">
+            <div class="card-head">
+              <h3>Functional unit &amp; boundary</h3>
+              <span class="hint">1,000 kg HDPE resin at the gate</span>
+            </div>
+            <div id="boundary-svg" class="boundary-wrap"></div>
+            <div class="legend" id="boundary-legend"></div>
+          </article>
+          <article class="card span-5" id="boundary-lists"></article>
+          <article class="card span-12">
+            <div class="card-head">
+              <h3>Module completeness</h3>
+              <span class="hint">status, materiality and basis per life-cycle module</span>
+            </div>
+            <div id="completeness" class="table-wrap"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="lca-section" id="s-impact">
+        <div class="sec-head">
+          <span class="sec-no">03</span>
+          <h2>Impact assessment</h2>
+          <span class="sec-note">one quantified category, one screening indicator, six declared and left empty</span>
+        </div>
+        <div class="grid">
+          <article class="card span-6">
+            <div class="card-head"><h3>Categories</h3><span class="hint">8 declared</span></div>
+            <div id="categories" class="table-wrap"></div>
+          </article>
+          <article class="card span-6">
+            <div class="card-head">
+              <h3>Contribution by stage</h3>
+              <div class="switch" id="impact-switch">
+                <button type="button" data-mode="gwp" class="on">Climate</button>
+                <button type="button" data-mode="energy">Energy</button>
+              </div>
+            </div>
+            <div id="impact-chart" class="chart-box"></div>
+            <div id="stage-table" class="mini-table"></div>
+          </article>
+          <article class="card span-12" id="impact-notes"></article>
+        </div>
+      </section>
+
+      <section class="lca-section" id="s-inventory">
+        <div class="sec-head">
+          <span class="sec-no">04</span>
+          <h2>Life-cycle inventory</h2>
+          <span class="sec-note">15 flows, every one with a unit, a source, a geography, a period and a pedigree score</span>
+        </div>
+        <div class="grid">
+          <article class="card span-12">
+            <div class="card-head">
+              <h3>Foreground flows</h3>
+              <div class="toolbar">
+                <div class="filters" id="flow-filters"></div>
+                <input id="flow-search" type="search" placeholder="filter flow, stage, source" aria-label="Filter flows" />
+              </div>
+            </div>
+            <div id="flows" class="table-wrap tall"></div>
+          </article>
+          <article class="card span-6">
+            <div class="card-head"><h3>Source register</h3><span class="hint" id="src-count"></span></div>
+            <div id="sources" class="table-wrap"></div>
+          </article>
+          <article class="card span-6">
+            <div class="card-head"><h3>Pedigree</h3><span class="hint">mean score 1 (best) to 5 (worst)</span></div>
+            <div id="dqi-summary"></div>
+            <div id="dqi-detail" class="table-wrap"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="lca-section" id="s-sensitivity">
+        <div class="sec-head">
+          <span class="sec-no">05</span>
+          <h2>Sensitivity</h2>
+          <span class="sec-note">every range is labelled by where it comes from; none is presented as measured variability</span>
+        </div>
+        <div class="grid">
+          <article class="card span-7">
+            <div class="card-head">
+              <h3>Which assumptions move the result</h3>
+              <span class="hint">t CO<sub>2</sub>e/t swing across the tested range</span>
+            </div>
+            <div id="tornado" class="chart-box tall"></div>
+            <div class="legend" id="sens-legend"></div>
+          </article>
+          <article class="card span-5">
+            <div class="card-head">
+              <h3>Carbon-balance reconciliation</h3>
+              <span class="hint">spec inventory → closure-consistent</span>
+            </div>
+            <div id="recon" class="chart-box tall"></div>
+            <p class="card-note" id="recon-note"></p>
+          </article>
+          <article class="card span-12">
+            <div class="card-head"><h3>Sensitivity register</h3><span class="hint">basis, tested range and rationale</span></div>
+            <div id="sens-table" class="table-wrap"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="lca-section" id="s-uncertainty">
+        <div class="sec-head">
+          <span class="sec-no">06</span>
+          <h2>Uncertainty</h2>
+          <span class="sec-note">two runs: what the evidence constrains, and what judgement adds</span>
+        </div>
+        <div class="grid">
+          <article class="card span-6">
+            <div class="card-head"><h3>Evidence-constrained</h3><span class="hint">reconciliation path only</span></div>
+            <div id="unc-evidence" class="chart-box"></div>
+          </article>
+          <article class="card span-6">
+            <div class="card-head"><h3>Screening</h3><span class="hint">evidence + judgement brackets</span></div>
+            <div id="unc-screening" class="chart-box"></div>
+          </article>
+          <article class="card span-12" id="unc-table"></article>
+        </div>
+      </section>
+
+      <section class="lca-section" id="s-scenarios">
+        <div class="sec-head">
+          <span class="sec-no">07</span>
+          <h2>Scenarios</h2>
+          <span class="sec-note">decisions, not uncertainties: grid future, allocation basis, utility basis</span>
+        </div>
+        <div class="grid">
+          <article class="card span-12">
+            <div class="card-head"><h3>Declared cases</h3><span class="hint">t CO<sub>2</sub>e / t HDPE</span></div>
+            <div id="scenarios" class="table-wrap"></div>
+            <p class="card-note" id="scen-note"></p>
+          </article>
+        </div>
+      </section>
+
+      <section class="lca-section" id="s-assurance">
+        <div class="sec-head">
+          <span class="sec-no">08</span>
+          <h2>Assurance</h2>
+          <span class="sec-note">acceptance checks, mass balance and the findings that qualify every number above</span>
+        </div>
+        <div class="grid">
+          <article class="card span-12">
+            <div class="card-head"><h3>Quality checks</h3><span class="hint" id="q-summary"></span></div>
+            <div id="quality" class="table-wrap"></div>
+          </article>
+          <article class="card span-12" id="openlca-card">
+            <div class="card-head"><h3>openLCA cross-check</h3><span class="hint" id="openlca-summary"></span></div>
+            <div id="openlca" class="table-wrap"></div>
+            <p class="card-note" id="openlca-note"></p>
+            <div id="openlca-characterisation" class="card-note" style="margin-top:10px"></div>
+          </article>
+          <article class="card span-12" id="primary-data-card">
+            <div class="card-head">
+              <h3>Primary data recompute</h3>
+              <span class="hint" id="primary-data-summary">no primary-data result</span>
+            </div>
+            <div class="grid">
+              <article class="card span-6">
+                <div class="toolbar" id="primary-data-params">
+                  <p class="card-note" style="margin-top:0">Enter any allowed inventory field (leave blank to keep the default). The recompute returns the same KPI card set as the study console, recomputed from those inputs.</p>
+                  <label class="field"><span>Natural gas upstream factor <span class="hint">kg CO2e / kg NG</span></span><input type="number" step="0.001" data-key="ef_ng_upstream" value="0.380" /></label>
+                  <label class="field"><span>Grid emission factor <span class="hint">kg CO2e / kWh</span></span><input type="number" step="0.001" data-key="ef_grid" value="0.475" /></label>
+                  <label class="field"><span>Steam emission factor <span class="hint">kg CO2e / GJ steam</span></span><input type="number" step="0.1" data-key="ef_steam" value="68.5" /></label>
+                  <label class="field"><span>Methanol Scope 1 <span class="hint">kg CO2e / t MeOH</span></span><input type="number" step="1" data-key="methanol_scope1" value="610" /></label>
+                  <label class="field"><span>MTO Scope 1 <span class="hint">kg CO2e / t C2H4</span></span><input type="number" step="1" data-key="mto_scope1" value="975" /></label>
+                  <label class="field"><span>HDPE Scope 1 <span class="hint">kg CO2e / t HDPE</span></span><input type="number" step="1" data-key="hdpe_scope1" value="125" /></label>
+                  <label class="field"><span>MTO burden share to ethylene <span class="hint">0–1</span></span><input type="number" step="0.01" min="0" max="1" data-key="mto_burden_share" value="1" /></label>
+                  <button type="button" id="primary-data-submit" class="btn">Recompute KPIs</button>
+                </div>
+              </div>
+              <article class="card span-6">
+                <div class="card-head"><h3>Recompute result</h3><span class="hint" id="primary-data-status">not computed</span></div>
+                <div class="table-wrap" style="margin-top:8px">
+                  <div id="primary-data-flows" class="mini-table"></div>
+                  <div id="primary-data-table" class="mini-table" style="margin-top:10px"></div>
+                  <div id="primary-data-stages" class="mini-table" style="margin-top:10px"></div>
+                  <div id="primary-data-chart" class="mini-table" style="margin-top:10px"></div>
+                  <div id="primary-data-coverage" class="card-note" style="margin-top:10px"></div>
+                  <div id="primary-data-findings" class="findings" style="margin-top:10px"></div>
+                </div>
+              </article>
+            </div>
+          </article>
+          <article class="card span-5">
+            <div class="card-head"><h3>Carbon closure</h3><span class="hint">±0.1 % requirement</span></div>
+            <div id="carbon" class="table-wrap"></div>
+          </article>
+          <article class="card span-7">
+            <div class="card-head"><h3>Findings</h3><span class="hint">quantified discrepancies</span></div>
+            <div id="findings" class="findings"></div>
+          </article>
+          <article class="card span-12">
+            <div class="card-head"><h3>Specification checks</h3><span class="hint" id="check-summary"></span></div>
+            <div id="checks" class="table-wrap"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="lca-section" id="s-files">
+        <div class="sec-head">
+          <span class="sec-no">09</span>
+          <h2>Deliverables</h2>
+          <span class="sec-note">the 4.4 set, with what is delivered and what is not</span>
+        </div>
+        <div class="grid">
+          <article class="card span-12">
+            <div class="card-head"><h3>Brief deliverables</h3><span class="hint" id="deliv-summary"></span></div>
+            <div id="deliverables" class="table-wrap"></div>
+          </article>
+          <article class="card span-12">
+            <div class="card-head"><h3>Files</h3><span class="hint" id="file-summary"></span></div>
+            <div id="files" class="files"></div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="lca-foot">
+      <span id="foot-meta">—</span>
+      <span>Generated from <code>lca/</code> · rebuild with <code>python -m lca</code></span>
+    </footer>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="/static/lca.js"></script>
+  </body>
+</html>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HDPE PCF Control Room</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark">PCF</div>
+        <div>
+          <h1>HDPE Carbon Control Room</h1>
+          <p class="sub">Cradle-to-gate · NG → MeOH → MTO → HDPE · ISO 14067</p>
+        </div>
+      </div>
+
+      <div class="headline">
+        <div class="headline-value">
+          <span id="h-total">—</span><small>t CO<sub>2</sub>e / t HDPE</small>
+        </div>
+        <div class="headline-meta">
+          <span id="h-batch">batch —</span>
+          <span id="h-spec">spec 6.07</span>
+          <span id="h-delta" class="delta">—</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <span id="v-status" class="chip">loading</span>
+        <a class="btn" href="/lca">LCA study</a>
+        <button id="btn-csv" type="button">CSV</button>
+        <button id="btn-json" type="button">JSON</button>
+        <button id="btn-pdf" class="primary" type="button">PDF report</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="panel controls">
+        <div class="panel-head">
+          <h2>Parameters</h2>
+          <button id="btn-reset" class="ghost" type="button">Reset</button>
+        </div>
+        <div class="presets" id="presets"></div>
+        <div id="controls" class="control-scroll"></div>
+        <p class="panel-note">
+          Every control recalculates mass balance, emissions and validation live.
+          Values are bounded to physically plausible ranges.
+        </p>
+      </aside>
+
+      <section class="workspace">
+        <div class="kpis" id="kpis"></div>
+
+        <div class="grid">
+          <article class="card span-8">
+            <div class="card-head">
+              <h3>Process flowsheet</h3>
+              <span class="hint">mass flows and stage emissions per functional unit</span>
+            </div>
+            <div id="flowsheet" class="chart-box tall"></div>
+          </article>
+
+          <article class="card span-4">
+            <div class="card-head"><h3>Scope split</h3></div>
+            <div id="scopebar"></div>
+            <div id="scopelist" class="scope-list"></div>
+          </article>
+
+          <article class="card span-7">
+            <div class="card-head">
+              <h3>Footprint build-up</h3>
+              <span class="hint">cumulative kg CO₂e by stage</span>
+            </div>
+            <div id="waterfall" class="chart-box"></div>
+          </article>
+
+          <article class="card span-5">
+            <div class="card-head"><h3>Hotspot matrix</h3></div>
+            <div id="hotspots" class="chart-box"></div>
+          </article>
+
+          <article class="card span-7">
+            <div class="card-head">
+              <h3>Grid decarbonisation response</h3>
+              <span class="hint">t CO₂e/t HDPE vs kg CO₂e/kWh</span>
+            </div>
+            <div id="sweep" class="chart-box"></div>
+          </article>
+
+          <article class="card span-5">
+            <div class="card-head">
+              <h3>Scenarios</h3>
+              <span class="hint">click a row to load it</span>
+            </div>
+            <div id="scenarios" class="table-wrap"></div>
+          </article>
+
+          <article class="card span-6">
+            <div class="card-head">
+              <h3>Parameter sensitivity</h3>
+              <span class="hint">±10 % one-at-a-time</span>
+            </div>
+            <div id="tornado" class="chart-box"></div>
+          </article>
+
+          <article class="card span-6">
+            <div class="card-head"><h3>Allocation &amp; utility basis</h3></div>
+            <div id="allocation" class="mini-table"></div>
+            <div id="utility" class="mini-table"></div>
+          </article>
+
+          <article class="card span-12">
+            <div class="card-head">
+              <h3>Mass balance &amp; validation</h3>
+              <span class="hint">±0.1 % carbon closure requirement</span>
+            </div>
+            <div class="split-2">
+              <div id="carbon" class="table-wrap"></div>
+              <div id="checks" class="table-wrap"></div>
+            </div>
+          </article>
+
+          <article class="card span-12">
+            <div class="card-head">
+              <h3>Findings</h3>
+              <span class="hint">quantified data-quality actions</span>
+            </div>
+            <div id="findings" class="findings"></div>
+          </article>
+
+          <article class="card span-12">
+            <div class="card-head">
+              <h3>Data tables</h3>
+              <div class="tabs" id="tabs"></div>
+            </div>
+            <div id="datatable" class="table-wrap tall"></div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

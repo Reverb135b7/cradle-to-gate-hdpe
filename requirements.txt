@@ -1,0 +1,21 @@
+numpy>=1.26
+pandas>=2.2
+matplotlib>=3.8
+reportlab>=4.0
+
+# LCA deliverables (python -m lca)
+openpyxl>=3.1
+python-pptx>=1.0
+pillow>=10.0
+
+# openLCA bridge (python -m lca.openlca_bridge); only imported when that command
+# runs, which needs openLCA 2.x with its IPC server on port 8080 - OPENLCA_SETUP.md
+olca-ipc>=2.0
+
+# dashboard (python -m app)
+fastapi>=0.110
+uvicorn>=0.27
+httpx>=0.27
+
+# development / verification
+pytest>=8.0
