@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# App generated outputs (regenerated on each run)
+app/_generated/
+outputs/
+
+# Images / screenshots (replace with commit-friendly copies if needed)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.pdf
+*.xlsx
+*.pptx
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment / secrets (track only .env.example)
+.env
+.env.local
+.env.*.local
+
+# Windows link/shortcut noise
+*.lnk
