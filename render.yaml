@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: opencarbonchem-dashboard
+    env: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.server:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: $PORT
+      - key: GENERATED_DIR
+        value: /app/app/_generated
+      - key: OPENLCA_HOST
+        value: 127.0.0.1
+      - key: OPENLCA_PORT
+        value: "8080"
+    disk:
+      name: opencarbonchem-generated
+      mountPath: /app/app/_generated
+      sizeGB: 1

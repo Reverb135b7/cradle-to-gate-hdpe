@@ -56,6 +56,49 @@ specification checks, findings, and full data tables for every export.
 Endpoints: `GET /api/meta`, `POST /api/simulate`, `POST /api/report`,
 `GET /api/health`. Options: `--host`, `--port`, `--reload`.
 
+## Deployment
+
+The dashboard is a normal Python FastAPI service: install deps from
+`requirements.txt`, then serve with uvicorn. The app honours the standard
+`HOST`/`PORT` environment variables (and the legacy `PCF_APP_HOST`/`PCF_APP_PORT`),
+so the same entrypoint works locally and on a PaaS.
+
+### Render (recommended hosted target)
+
+1. Push this repository to GitHub.
+2. Create a Render **Web Service** from that repo, or apply `render.yaml` as a
+   Blueprint.
+3. Build command: `pip install -r requirements.txt`.
+4. Start command: `uvicorn app.server:app --host 0.0.0.0 --port $PORT`.
+5. Set `PYTHON_VERSION` to a platform-supported version if needed (the local
+   checkout uses a newer Python than most free tiers, so pin it explicitly).
+6. Attach a small persistent disk and mount it at `/app/app/_generated`.
+
+The disk is what makes generated outputs survive deploy restarts: on demand the
+`POST /api/report` endpoint writes the PDF report and figures into
+`app/_generated/<run>/`, and `GET /lca/files/openlca/characterisation_coverage.csv`
+writes a coverage CSV there too. The app is wired through the `GENERATED_DIR`
+environment variable, so the same code uses the mount path on Render and the
+local `app/_generated` default offline.
+
+### What works and what does not on a hosted / stateless run
+
+- **Works:** the PCF dashboard (`/`), the LCA console (`/lca`) read side, every
+  API endpoint, CSV/JSON client-side exports, and on-demand PDF report generation
+  into the mounted disk.
+- **Degrades without extra infra:** the openLCA cross-check card and the
+  `GET /api/lca/openlca/methods` endpoint need a live openLCA IPC server
+  (`olca_ipc` on `OPENLCA_HOST:OPENLCA_PORT`). With it absent they return 503
+  / a coverage note instead of crashing; that is by design, not a bug.
+- **Ephemeral unless mounted:** prebuilt `outputs/LCA` artefacts (report PDF, deck,
+  workbook, figures) are gitignored and must either be placed on the mounted disk
+  by a build step or omitted. The dashboard's downloadable `outputs/LCA` route
+  serves only what actually exists on disk.
+
+A `Dockerfile` is also provided for any other host that can run a Python service.
+It does not bundle openLCA or the historical `outputs/LCA` deliverables; mount a
+writable `GENERATED_DIR` at runtime for report generation.
+
 ## LCA console (`/lca`)
 
 The same server also serves the assessment as a document-shaped console over one

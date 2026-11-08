@@ -11,6 +11,7 @@ from __future__ import annotations
 import dataclasses
 import json
 import math
+import os
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -33,7 +34,14 @@ from . import lca_data, params_meta
 
 APP_DIR = Path(__file__).resolve().parent
 STATIC_DIR = APP_DIR / "static"
-GENERATED_DIR = APP_DIR / "_generated"
+def _generated_dir() -> Path:
+    env = os.environ.get("GENERATED_DIR")
+    if env:
+        return Path(env).resolve()
+    return APP_DIR / "_generated"
+
+
+GENERATED_DIR = _generated_dir()
 
 #: headline values from the technical specification, for the comparison column
 SPEC_REFERENCE = {
@@ -305,7 +313,7 @@ def openlca_characterisation_coverage() -> FileResponse:
     """Characterisation coverage exported from the open database's impact methods."""
     from lca.openlca import characterisation_coverage
     frame = characterisation_coverage()
-    path = APP_DIR / "_generated" / "openlca_characterisation_coverage.csv"
+    path = GENERATED_DIR / "openlca_characterisation_coverage.csv"
     path.parent.mkdir(parents=True, exist_ok=True)
     frame.to_csv(path, index=False)
     return FileResponse(path, filename="openlca_characterisation_coverage.csv")
